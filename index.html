@@ -144,6 +144,9 @@ textarea{min-height:75px}
 </head>
 
 <body>
+  <audio id="enterSound" preload="auto">
+  <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3" type="audio/mpeg">
+</audio>
 
 <div id="intro">
 <video id="introVideo" autoplay muted playsinline>
@@ -290,6 +293,12 @@ let editingFile2 = null;
 function enterSite(){
   const intro = document.getElementById("intro");
   const video = document.getElementById("introVideo");
+  const sound = document.getElementById("enterSound");
+
+  if(sound){
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+  }
 
   intro.style.opacity = "0";
   intro.style.transition = ".6s";
