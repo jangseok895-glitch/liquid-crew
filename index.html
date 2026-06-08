@@ -1,14 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<title>Liquid Crew</title>
+<meta charset="UTF-8">
+<title>리퀴드 크루</title>
+
+<style>
+body{
+    margin:0;
+    background:url('https://i.ibb.co/PvHqVGW0/2.png') center center / cover no-repeat fixed;
+    min-height:100vh;
+    font-family:'Malgun Gothic';
+}
+
+#intro{
+    position:fixed;
+    inset:0;
+    background:black;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#count{
+    font-size:100px;
+    font-weight:bold;
+}
+
+.menu-area{
+    width:80%;
+    max-width:700px;
+    margin:auto;
+    margin-top:580px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu-btn{
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h1>Liquid Crew</h1>
+<div id="intro">
+    <h1>사이트로 이동합니다</h1>
+    <div id="count">3</div>
+</div>
 
-<p>사이트 제작중...</p>
+<div class="menu-area">
+
+<button class="menu-btn"
+onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">
+가입문의방 들어가기
+</button>
+
+<button class="menu-btn">규정</button>
+
+<button class="menu-btn">프로 현황</button>
+
+<button class="menu-btn">강주력 현황</button>
+
+<button class="menu-btn">주력 현황</button>
+
+<button class="menu-btn">1군 현황</button>
+
+<button class="menu-btn">2군 현황</button>
+
+<button class="menu-btn">3군 현황</button>
+
+<button class="menu-btn">4군 현황</button>
+
+</div>
+
+<script>
+
+let count=3;
+
+const timer=setInterval(()=>{
+
+document.getElementById("count").innerText=count;
+
+count--;
+
+if(count<0){
+
+clearInterval(timer);
+
+document.getElementById("intro").style.display="none";
+
+}
+
+},1000);
+
+</script>
 
 </body>
 </html>
