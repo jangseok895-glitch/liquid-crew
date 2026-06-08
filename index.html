@@ -44,12 +44,13 @@ body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;co
   position:relative;
   z-index:2;
   text-align:center;
-  padding:34px 55px;
+  padding:28px 48px;
   border-radius:28px;
   background:rgba(0,0,0,.35);
   border:1px solid rgba(120,220,255,.45);
   box-shadow:0 0 45px rgba(0,200,255,.65);
   backdrop-filter:blur(5px);
+  transform:translateY(170px);
 }
 
 .enter-btn{
@@ -116,7 +117,19 @@ th:nth-child(5){width:16%}
 .form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
 input,textarea{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
 textarea{min-height:75px}
-.rule-img{width:100%;border-radius:14px}
+.rule-modal-box{
+  width:720px;
+  max-height:92vh;
+  overflow:hidden;
+}
+
+.rule-img{
+  width:100%;
+  max-height:78vh;
+  object-fit:contain;
+  border-radius:14px;
+  display:block;
+}
 .mini-action{width:auto;height:30px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:900;color:white;margin:0}
 .mini-action.red{background:#ff3434}
 .mini-action.blue{background:#2b7cff}
@@ -236,7 +249,7 @@ textarea{min-height:75px}
 </div>
 
 <div class="modal" id="ruleModal">
-  <div class="modal-box">
+  <div class="modal-box rule-modal-box">
     <div class="modal-head">
       <h2>규정 / 개요</h2>
       <button class="close-btn" onclick="closeRule()">닫기</button>
