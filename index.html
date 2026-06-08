@@ -428,13 +428,11 @@ async function loadList(){
 function openImage(url){
   document.getElementById("bigImage").src = url;
   document.getElementById("imageModal").style.display = "flex";
-  pushStep();
 }
 
 function closeImage(back=true){
   document.getElementById("imageModal").style.display = "none";
   document.getElementById("bigImage").src = "";
-  if(back) history.back();
 }
 
 async function confirmMember(id){
