@@ -73,8 +73,29 @@ body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;co
   100%{transform:scale(1);box-shadow:0 0 25px rgba(80,220,255,.9)}
 }
 
-.main{min-height:100vh;background:#03030c url('https://i.ibb.co/XRn7r4Q/2.jpg') top center/contain no-repeat fixed;padding:190px 18px 40px}
-.content{width:620px;margin:0 auto}
+.main{
+  min-height:100vh;
+  background:#03030c;
+  padding:0 0 40px;
+  display:flex;
+  justify-content:center;
+}
+
+.poster-wrap{
+  position:relative;
+  width:760px;
+  min-height:100vh;
+  background:url('https://i.ibb.co/XRn7r4Q/2.jpg') top center/100% auto no-repeat;
+}
+
+.content{
+  position:absolute;
+  top:190px;
+  left:50%;
+  transform:translateX(-50%);
+  width:620px;
+  margin:0;
+}
 .menu-panel{padding:15px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
 .menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
 .top-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -92,7 +113,16 @@ button{cursor:pointer;border:none}
 .t3{background:linear-gradient(135deg,#00cec9,#0984e3)}
 .t4{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
 
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  z-index:1000;
+  align-items:flex-start;
+  justify-content:center;
+  padding:70px 20px 20px;
+}
 .modal-box{width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-head h2{margin:0;color:#9eefff}
@@ -149,9 +179,9 @@ textarea{min-height:75px}
 </audio>
 
 <div id="intro">
-<video id="introVideo" autoplay muted playsinline>
-    <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
-  </video>
+<video id="introVideo" autoplay muted playsinline webkit-playsinline preload="auto">
+  <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
+</video>
 
   <div class="intro-box">
     <button class="enter-btn" onclick="enterSite()">입장하기</button>
@@ -159,22 +189,24 @@ textarea{min-height:75px}
 </div>
 
 <div class="main">
-  <div class="content">
-    <div class="menu-panel">
-      <div class="menu-title">LIQUID CREW MENU</div>
+  <div class="poster-wrap">
+    <div class="content">
+      <div class="menu-panel">
+        <div class="menu-title">LIQUID CREW MENU</div>
 
-      <div class="top-menu">
-        <button class="menu-btn big-btn kakao" onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">가입문의방 들어가기</button>
-        <button class="menu-btn big-btn rule" onclick="openRule()">규정 / 개요</button>
-      </div>
+        <div class="top-menu">
+          <button class="menu-btn big-btn kakao" onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">가입문의방 들어가기</button>
+          <button class="menu-btn big-btn rule" onclick="openRule()">규정 / 개요</button>
+        </div>
 
-      <div class="sub-menu">
-        <button class="menu-btn small-btn pro" onclick="openTier('프로')">프로</button>
-        <button class="menu-btn small-btn main-tier" onclick="openTier('강주/주')">강주/주</button>
-        <button class="menu-btn small-btn t1" onclick="openTier('1군')">1군</button>
-        <button class="menu-btn small-btn t2" onclick="openTier('2군')">2군</button>
-        <button class="menu-btn small-btn t3" onclick="openTier('3군')">3군</button>
-        <button class="menu-btn small-btn t4" onclick="openTier('4군')">4군</button>
+        <div class="sub-menu">
+          <button class="menu-btn small-btn pro" onclick="openTier('프로')">프로</button>
+          <button class="menu-btn small-btn main-tier" onclick="openTier('강주/주')">강주/주</button>
+          <button class="menu-btn small-btn t1" onclick="openTier('1군')">1군</button>
+          <button class="menu-btn small-btn t2" onclick="openTier('2군')">2군</button>
+          <button class="menu-btn small-btn t3" onclick="openTier('3군')">3군</button>
+          <button class="menu-btn small-btn t4" onclick="openTier('4군')">4군</button>
+        </div>
       </div>
     </div>
   </div>
@@ -683,6 +715,27 @@ function escapeHtml(text){
     intro.style.background =
       "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
   });
+});
+
+  window.addEventListener("DOMContentLoaded", () => {
+  const video = document.getElementById("introVideo");
+  const intro = document.getElementById("intro");
+
+  if(video){
+    video.muted = true;
+    video.playsInline = true;
+
+    video.play().catch(() => {
+      intro.style.background =
+        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+    });
+
+    video.addEventListener("ended", () => {
+      video.style.display = "none";
+      intro.style.background =
+        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+    });
+  }
 });
 </script>
 
