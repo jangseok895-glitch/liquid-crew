@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1200">
 <title>리퀴드크루</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -58,7 +60,6 @@ th:nth-child(5){width:16%}
 .form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
 input,textarea{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
 textarea{min-height:75px}
-.img-link{color:#7ee7ff;text-decoration:underline;font-weight:900;margin:0 5px}
 .rule-img{width:100%;border-radius:14px}
 .mini-action{width:auto;height:30px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:900;color:white;margin:0}
 .mini-action.red{background:#ff3434}
@@ -105,10 +106,11 @@ textarea{min-height:75px}
 </div>
 
 <div class="modal" id="tierModal">
-  <div class="modal-box">
+  <div class="modal-box" id="captureArea">
     <div class="modal-head">
       <h2 id="modalTitle"></h2>
       <div class="head-buttons">
+        <button class="normal-btn" onclick="captureTier()">스크린샷</button>
         <button class="normal-btn" id="normalBtn" onclick="normalMode()" style="display:none">일반모드로 가기</button>
         <button class="normal-btn" id="adminTopBtn" onclick="adminLogin()">운영진 모드</button>
         <button class="close-btn" onclick="closeTierModal()">닫기</button>
@@ -542,6 +544,26 @@ async function deleteMember(id){
   if(error) return alert("삭제 실패: " + error.message);
 
   loadList();
+}
+
+async function captureTier(){
+  const target = document.getElementById("captureArea");
+
+  if(!target){
+    alert("스크린샷할 화면을 찾을 수 없습니다.");
+    return;
+  }
+
+  const canvas = await html2canvas(target, {
+    backgroundColor:"#050713",
+    scale:2,
+    useCORS:true
+  });
+
+  const link = document.createElement("a");
+  link.download = `${currentTier || "liquid"}_현황.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 }
 
 function escapeHtml(text){
