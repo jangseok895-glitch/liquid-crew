@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
+<meta name="viewport" content="width=760">
 <title>리퀴드크루</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -10,92 +10,18 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;color:white;min-width:1200px}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;color:white;min-width:760px}
 
-/* 입장 화면 */
-#intro{
-  position:fixed;
-  inset:0;
-  background:#03030c;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  overflow:hidden;
-}
+#intro{position:fixed;inset:0;background:#03030c;display:flex;align-items:center;justify-content:center;z-index:9999;overflow:hidden}
+#introVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#03030c}
+#intro:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18)}
+.intro-box{position:relative;z-index:2;text-align:center;padding:28px 48px;border-radius:28px;background:rgba(0,0,0,.35);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 45px rgba(0,200,255,.65);backdrop-filter:blur(5px);transform:translateY(200px)}
+.enter-btn{width:260px;height:70px;border-radius:999px;font-size:26px;font-weight:900;color:white;background:linear-gradient(135deg,#19d7ff,#8057ff,#ff3bd4);box-shadow:0 0 25px rgba(80,220,255,.9),0 0 55px rgba(155,60,255,.65);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
 
-#introVideo{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  background:#03030c;
-}
-
-#intro:after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.25);
-}
-
-.intro-box{
-  position:relative;
-  z-index:2;
-  text-align:center;
-  padding:28px 48px;
-  border-radius:28px;
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(120,220,255,.45);
-  box-shadow:0 0 45px rgba(0,200,255,.65);
-  backdrop-filter:blur(5px);
-  transform:translateY(200px);
-}
-
-.enter-btn{
-  width:260px;
-  height:70px;
-  border:none;
-  border-radius:999px;
-  font-size:26px;
-  font-weight:900;
-  color:white;
-  cursor:pointer;
-  background:linear-gradient(135deg,#19d7ff,#8057ff,#ff3bd4);
-  box-shadow:0 0 25px rgba(80,220,255,.9),0 0 55px rgba(155,60,255,.65);
-  animation:pulse 1.4s infinite;
-}
-
-@keyframes pulse{
-  0%{transform:scale(1);box-shadow:0 0 25px rgba(80,220,255,.9)}
-  50%{transform:scale(1.06);box-shadow:0 0 45px rgba(255,60,220,.9)}
-  100%{transform:scale(1);box-shadow:0 0 25px rgba(80,220,255,.9)}
-}
-
-.main{
-  min-height:100vh;
-  background:#03030c;
-  padding:0 0 40px;
-  display:flex;
-  justify-content:center;
-}
-
-.poster-wrap{
-  position:relative;
-  width:760px;
-  min-height:100vh;
-  background:url('https://i.ibb.co/XRn7r4Q/2.jpg') top center/100% auto no-repeat;
-}
-
-.content{
-  position:absolute;
-  top:190px;
-  left:50%;
-  transform:translateX(-50%);
-  width:620px;
-  margin:0;
-}
+.main{min-height:100vh;background:#03030c;padding:0 0 40px;display:flex;justify-content:center}
+.poster-wrap{position:relative;width:760px;min-height:100vh;background:url('https://i.ibb.co/XRn7r4Q/2.jpg') top center/100% auto no-repeat}
+.content{position:absolute;top:190px;left:50%;transform:translateX(-50%);width:620px;margin:0}
 .menu-panel{padding:15px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
 .menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
 .top-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -113,17 +39,8 @@ button{cursor:pointer;border:none}
 .t3{background:linear-gradient(135deg,#00cec9,#0984e3)}
 .t4{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
 
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  z-index:1000;
-  align-items:flex-start;
-  justify-content:center;
-  padding:70px 20px 20px;
-}
-.modal-box{width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:flex-start;justify-content:center;padding:55px 20px 20px}
+.modal-box{width:760px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-head h2{margin:0;color:#9eefff}
 .head-buttons{display:flex;gap:8px}
@@ -135,11 +52,11 @@ button{cursor:pointer;border:none}
 table{width:100%;border-collapse:collapse;margin-top:10px;background:rgba(255,255,255,.04);table-layout:fixed}
 th,td{border:1px solid rgba(255,255,255,.16);padding:10px;text-align:center;font-size:15px;word-break:keep-all}
 th{background:rgba(70,170,255,.25);color:#bfeeff}
-th:nth-child(1){width:26%}
-th:nth-child(2){width:16%}
+th:nth-child(1){width:20%}
+th:nth-child(2){width:12%}
 th:nth-child(3){width:18%}
-th:nth-child(4){width:24%}
-th:nth-child(5){width:16%}
+th:nth-child(4){width:32%}
+th:nth-child(5){width:18%}
 
 .badge{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900}
 .badge-ok{background:red;color:white}
@@ -147,41 +64,30 @@ th:nth-child(5){width:16%}
 .form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
 input,textarea{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
 textarea{min-height:75px}
-.rule-modal-box{
-  width:720px;
-  max-height:92vh;
-  overflow:hidden;
-}
-
-.rule-img{
-  width:100%;
-  max-height:78vh;
-  object-fit:contain;
-  border-radius:14px;
-  display:block;
-}
+.rule-modal-box{width:720px;max-height:92vh;overflow:hidden}
+.rule-img{width:100%;max-height:78vh;object-fit:contain;border-radius:14px;display:block}
 .mini-action{width:auto;height:30px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:900;color:white;margin:0}
 .mini-action.red{background:#ff3434}
 .mini-action.blue{background:#2b7cff}
 .mini-action.gray{background:#777}
 .action-row{display:flex;gap:5px;justify-content:center;margin-top:7px;flex-wrap:nowrap}
 .edit-small{font-size:13px;color:#ddd;margin:6px 0}
-
-.image-view-box{width:900px;max-height:90vh;overflow:auto;border-radius:18px;background:#050713;padding:18px;border:1px solid rgba(120,220,255,.45)}
+.image-view-box{width:760px;max-height:90vh;overflow:auto;border-radius:18px;background:#050713;padding:18px;border:1px solid rgba(120,220,255,.45)}
 .image-view-head{display:flex;justify-content:flex-end;margin-bottom:10px}
 .big-image{width:100%;border-radius:12px}
 </style>
 </head>
 
 <body>
-  <audio id="enterSound" preload="auto">
+
+<audio id="enterSound" preload="auto">
   <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3" type="audio/mpeg">
 </audio>
 
 <div id="intro">
-<video id="introVideo" autoplay muted playsinline webkit-playsinline preload="auto">
-  <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
-</video>
+  <video id="introVideo" autoplay muted playsinline webkit-playsinline preload="auto">
+    <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
+  </video>
 
   <div class="intro-box">
     <button class="enter-btn" onclick="enterSite()">입장하기</button>
@@ -322,16 +228,47 @@ let editingId = null;
 let editingFile1 = null;
 let editingFile2 = null;
 
+window.addEventListener("DOMContentLoaded", () => {
+  const video = document.getElementById("introVideo");
+  const intro = document.getElementById("intro");
+  const isMobile = /Android|iPhone|iPad|iPod|KAKAOTALK/i.test(navigator.userAgent);
+
+  if(isMobile){
+    if(video) video.style.display = "none";
+    intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+    return;
+  }
+
+  if(video){
+    video.muted = true;
+    video.playsInline = true;
+    video.load();
+
+    const playPromise = video.play();
+
+    if(playPromise){
+      playPromise.catch(() => {
+        video.style.display = "none";
+        intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+      });
+    }
+
+    video.addEventListener("ended", () => {
+      video.style.display = "none";
+      intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+    });
+  }
+});
+
 function enterSite(){
   const intro = document.getElementById("intro");
   const video = document.getElementById("introVideo");
+  const sound = document.getElementById("enterSound");
 
-  const sound = new Audio("https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3");
-  sound.volume = 1;
-  sound.currentTime = 0;
-  sound.play().catch(err => {
-    console.log("효과음 재생 실패:", err);
-  });
+  if(sound){
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+  }
 
   intro.style.opacity = "0";
   intro.style.transition = ".6s";
@@ -524,11 +461,7 @@ async function loadList(){
         <td>${shots}</td>
         <td>${escapeHtml(row.career || "")}</td>
         <td>
-          ${confirmed 
-            ? `<span class="badge badge-ok">확정</span>` 
-            : `<span class="badge badge-wait">지원중</span>`
-          }
-
+          ${confirmed ? `<span class="badge badge-ok">확정</span>` : `<span class="badge badge-wait">지원중</span>`}
           ${adminOk ? `
             <div class="action-row">
               ${!confirmed ? `<button class="mini-action red" onclick="confirmMember(${row.id})">확정</button>` : ""}
@@ -689,54 +622,6 @@ function escapeHtml(text){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-
-  window.addEventListener("DOMContentLoaded", () => {
-  const video = document.getElementById("introVideo");
-
-  if(video){
-    video.addEventListener("ended", () => {
-      video.style.display = "none";
-      document.getElementById("intro").style.background =
-        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
-    });
-  }
-});
-
-  window.addEventListener("DOMContentLoaded", () => {
-  const video = document.getElementById("introVideo");
-  const intro = document.getElementById("intro");
-
-  video.play().catch(() => {
-    console.log("자동재생이 차단되었습니다.");
-  });
-
-  video.addEventListener("ended", () => {
-    video.style.display = "none";
-    intro.style.background =
-      "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
-  });
-});
-
-  window.addEventListener("DOMContentLoaded", () => {
-  const video = document.getElementById("introVideo");
-  const intro = document.getElementById("intro");
-
-  if(video){
-    video.muted = true;
-    video.playsInline = true;
-
-    video.play().catch(() => {
-      intro.style.background =
-        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
-    });
-
-    video.addEventListener("ended", () => {
-      video.style.display = "none";
-      intro.style.background =
-        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
-    });
-  }
-});
 </script>
 
 </body>
