@@ -178,66 +178,30 @@ function adminLogin(){
   }
 }
 
-async function compressImage(file){
-  return new Promise((resolve,reject)=>{
-    if(!file) return resolve(null);
-
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const max = 1200;
-        let w = img.width;
-        let h = img.height;
-
-        if(w > h && w > max){
-          h = Math.round(h * max / w);
-          w = max;
-        }else if(h > max){
-          w = Math.round(w * max / h);
-          h = max;
-        }
-
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext("2d").drawImage(img,0,0,w,h);
-
-        canvas.toBlob(blob=>{
-          resolve(new File([blob], "compressed.jpg", {type:"image/jpeg"}));
-        },"image/jpeg",0.72);
-      };
-      img.src = e.target.result;
-    };
-
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 async function uploadFile(file, folder){
   if(!file) return null;
 
-  try{
-    const compressed = await compressImage(file);
-    const safeFolder = folder.replaceAll("/","_");
-    const fileName = `${safeFolder}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+  const safeFolder = folder.replaceAll("/","_");
+  const ext = file.name.split(".").pop() || "jpg";
+  const fileName = `${safeFolder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
-    const { error } = await db.storage
-      .from("liquid-files")
-      .upload(fileName, compressed);
+  const { error } = await db.storage
+    .from("liquid-files")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
 
-    if(error) return null;
-
-    const { data } = db.storage
-      .from("liquid-files")
-      .getPublicUrl(fileName);
-
-    return data.publicUrl;
-  }catch(e){
+  if(error){
+    alert("사진 업로드 실패: " + error.message);
     return null;
   }
+
+  const { data } = db.storage
+    .from("liquid-files")
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
 }
 
 async function saveMember(){
@@ -296,7 +260,7 @@ async function loadList(){
   const body = document.getElementById("listBody");
 
   if(error){
-    body.innerHTML = `<tr><td colspan="5">불러오기 실패</td></tr>`;
+    body.innerHTML = `<tr><td colspan="5">불러오기 실패: ${error.message}</td></tr>`;
     return;
   }
 
@@ -307,8 +271,8 @@ async function loadList(){
 
   body.innerHTML = data.map(row=>{
     const shots = `
-      ${row.file1_url ? `<a class="img-link" href="${row.file1_url}" target="_blank">사진1</a>` : ""}
-      ${row.file2_url ? `<a class="img-link" href="${row.file2_url}" target="_blank">사진2</a>` : ""}
+      ${row.file1_url ? `<a class="img-link" href="${row.file1_url}" target="_blank">사진1 보기</a>` : ""}
+      ${row.file2_url ? `<a class="img-link" href="${row.file2_url}" target="_blank">사진2 보기</a>` : ""}
     `.trim() || "-";
 
     const confirmed = row.status === "confirmed";
@@ -322,6 +286,12 @@ async function loadList(){
         <td>
           ${confirmed ? `<span class="badge">확정!</span>` :
           adminOk ? `<button class="confirm-btn" onclick="confirmMember(${row.id})">확정하기</button>` : `-`}
+
+          ${adminOk ? `
+            <br>
+            <button class="confirm-btn" style="background:#2b7cff" onclick="editMember(${row.id}, '${escapeJs(row.nickname)}', '${escapeJs(row.military_rank)}', '${escapeJs(row.career)}')">수정</button>
+            <button class="confirm-btn" style="background:#777" onclick="deleteMember(${row.id})">삭제</button>
+          ` : ""}
         </td>
       </tr>
     `;
@@ -329,11 +299,7 @@ async function loadList(){
 }
 
 async function confirmMember(id){
-  if(!adminOk){
-    alert("운영진 모드에서만 가능합니다.");
-    return;
-  }
-
+  if(!adminOk) return alert("운영진 모드에서만 가능합니다.");
   if(!confirm("이 인원을 확정 처리할까요?")) return;
 
   const { error } = await db
@@ -341,12 +307,51 @@ async function confirmMember(id){
     .update({status:"confirmed"})
     .eq("id", id);
 
-  if(error){
-    alert("확정 실패: " + error.message);
-    return;
-  }
+  if(error) return alert("확정 실패: " + error.message);
 
   alert("확정 처리되었습니다.");
+  loadList();
+}
+
+async function editMember(id, oldNick, oldRank, oldCareer){
+  if(!adminOk) return alert("운영진 모드에서만 가능합니다.");
+
+  const nickname = prompt("닉네임 수정", oldNick);
+  if(nickname === null) return;
+
+  const military_rank = prompt("군수 수정", oldRank);
+  if(military_rank === null) return;
+
+  const career = prompt("비고 수정", oldCareer);
+  if(career === null) return;
+
+  const { error } = await db
+    .from("liquid_applications")
+    .update({
+      nickname,
+      military_rank,
+      career
+    })
+    .eq("id", id);
+
+  if(error) return alert("수정 실패: " + error.message);
+
+  alert("수정되었습니다.");
+  loadList();
+}
+
+async function deleteMember(id){
+  if(!adminOk) return alert("운영진 모드에서만 가능합니다.");
+  if(!confirm("정말 삭제할까요?")) return;
+
+  const { error } = await db
+    .from("liquid_applications")
+    .delete()
+    .eq("id", id);
+
+  if(error) return alert("삭제 실패: " + error.message);
+
+  alert("삭제되었습니다.");
   loadList();
 }
 
@@ -358,7 +363,14 @@ function escapeHtml(text){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-</script>
 
+function escapeJs(text){
+  return String(text || "")
+    .replaceAll("\\","\\\\")
+    .replaceAll("'","\\'")
+    .replaceAll("\n"," ");
+}
+</script>
+  
 </body>
 </html>
