@@ -11,10 +11,66 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;color:white;min-width:1200px}
-#intro{position:fixed;inset:0;background:#03030c url('https://i.ibb.co/zHjPvK8n/image.png') center/contain no-repeat;display:flex;align-items:center;justify-content:center;z-index:9999}
-#intro:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
-.intro-box{z-index:2;text-align:center;background:rgba(0,0,0,.55);padding:30px 45px;border-radius:22px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 35px rgba(0,170,255,.55)}
-#count{font-size:95px;font-weight:900;color:#8ee7ff}
+
+/* 입장 화면 */
+#intro{
+  position:fixed;
+  inset:0;
+  background:#03030c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  overflow:hidden;
+}
+
+#introVideo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#03030c;
+}
+
+#intro:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.25);
+}
+
+.intro-box{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  padding:34px 55px;
+  border-radius:28px;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(120,220,255,.45);
+  box-shadow:0 0 45px rgba(0,200,255,.65);
+  backdrop-filter:blur(5px);
+}
+
+.enter-btn{
+  width:260px;
+  height:70px;
+  border:none;
+  border-radius:999px;
+  font-size:26px;
+  font-weight:900;
+  color:white;
+  cursor:pointer;
+  background:linear-gradient(135deg,#19d7ff,#8057ff,#ff3bd4);
+  box-shadow:0 0 25px rgba(80,220,255,.9),0 0 55px rgba(155,60,255,.65);
+  animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);box-shadow:0 0 25px rgba(80,220,255,.9)}
+  50%{transform:scale(1.06);box-shadow:0 0 45px rgba(255,60,220,.9)}
+  100%{transform:scale(1);box-shadow:0 0 25px rgba(80,220,255,.9)}
+}
 
 .main{min-height:100vh;background:#03030c url('https://i.ibb.co/XRn7r4Q/2.jpg') top center/contain no-repeat fixed;padding:190px 18px 40px}
 .content{width:760px;margin:0 auto}
@@ -77,9 +133,12 @@ textarea{min-height:75px}
 <body>
 
 <div id="intro">
+  <video id="introVideo" autoplay muted loop playsinline>
+    <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
+  </video>
+
   <div class="intro-box">
-    <h1>사이트로 이동합니다</h1>
-    <div id="count">3</div>
+    <button class="enter-btn" onclick="enterSite()">입장하기</button>
   </div>
 </div>
 
@@ -215,15 +274,18 @@ let editingId = null;
 let editingFile1 = null;
 let editingFile2 = null;
 
-let count = 3;
-const timer = setInterval(()=>{
-  document.getElementById("count").innerText = count;
-  count--;
-  if(count < 0){
-    clearInterval(timer);
-    document.getElementById("intro").style.display="none";
-  }
-},1000);
+function enterSite(){
+  const intro = document.getElementById("intro");
+  const video = document.getElementById("introVideo");
+
+  intro.style.opacity = "0";
+  intro.style.transition = ".6s";
+
+  setTimeout(()=>{
+    intro.style.display = "none";
+    if(video) video.pause();
+  },600);
+}
 
 window.onpopstate = function(){
   closeTopModal();
@@ -430,7 +492,7 @@ function openImage(url){
   document.getElementById("imageModal").style.display = "flex";
 }
 
-function closeImage(back=true){
+function closeImage(){
   document.getElementById("imageModal").style.display = "none";
   document.getElementById("bigImage").src = "";
 }
