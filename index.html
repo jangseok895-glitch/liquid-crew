@@ -9,11 +9,12 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;color:white}
-#intro{position:fixed;inset:0;background:url('https://i.ibb.co/zHjPvK8n/image.png') center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:9999}
+#intro{position:fixed;inset:0;background:#03030c url('https://i.ibb.co/zHjPvK8n/image.png') center/contain no-repeat;display:flex;align-items:center;justify-content:center;z-index:9999}
 #intro:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
 .intro-box{z-index:2;text-align:center;background:rgba(0,0,0,.55);padding:30px 45px;border-radius:22px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 35px rgba(0,170,255,.55)}
 #count{font-size:95px;font-weight:900;color:#8ee7ff}
-.main{min-height:100vh;background:url('https://i.ibb.co/PvHqVGW0/2.png') top center/cover no-repeat fixed;padding:215px 18px 40px}
+
+.main{min-height:100vh;background:#03030c url('https://i.ibb.co/PvHqVGW0/2.png') top center/contain no-repeat fixed;padding:215px 18px 40px}
 .content{max-width:900px;margin:0 auto}
 .menu-panel{padding:16px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
 .menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
@@ -26,25 +27,37 @@ button{cursor:pointer;border:none}
 .kakao{background:linear-gradient(135deg,#ffe252,#ff9f1a);color:#111}
 .rule{background:linear-gradient(135deg,#333,#555)}
 .tier{background:linear-gradient(135deg,#2357b9,#8a23d7)}
+
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-box{width:100%;max-width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-head h2{margin:0;color:#9eefff}
-.close-btn{border-radius:10px;padding:8px 13px;font-weight:900}
+.head-buttons{display:flex;gap:8px}
+.close-btn,.normal-btn{border-radius:10px;padding:8px 13px;font-weight:900}
+.normal-btn{display:none;background:#207cff;color:white}
 .manager{margin-bottom:15px;color:#ffd66b;font-weight:bold}
+
 table{width:100%;border-collapse:collapse;margin-top:10px;background:rgba(255,255,255,.04)}
 th,td{border:1px solid rgba(255,255,255,.16);padding:10px;text-align:center}
 th{background:rgba(70,170,255,.25);color:#bfeeff}
-.badge{display:inline-block;background:red;color:white;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900}
-.admin-btn,.save-btn,.confirm-btn{margin-top:12px;width:100%;height:45px;border-radius:12px;font-weight:900;font-size:15px}
+.badge{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900}
+.badge-ok{background:red;color:white}
+.badge-wait{background:#207cff;color:white}
+
+.admin-btn,.save-btn,.confirm-btn,.edit-btn,.delete-btn{margin-top:8px;width:100%;height:42px;border-radius:12px;font-weight:900;font-size:14px;color:white}
 .admin-btn{background:#222;color:#eee;border:1px solid rgba(255,255,255,.25)}
-.save-btn{background:linear-gradient(135deg,#20d6ff,#7a5cff);color:white}
-.confirm-btn{background:#ff3434;color:white}
+.save-btn{background:linear-gradient(135deg,#20d6ff,#7a5cff)}
+.confirm-btn{background:#ff3434}
+.edit-btn{background:#2b7cff}
+.delete-btn{background:#777}
+
 .form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
 input,textarea{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
 textarea{min-height:75px}
-.img-link{color:#7ee7ff;text-decoration:underline;font-weight:900}
+.img-link{color:#7ee7ff;text-decoration:underline;font-weight:900;margin:0 5px}
 .rule-img{width:100%;border-radius:14px}
+.edit-small{font-size:13px;color:#ddd;margin:6px 0}
+
 @media(max-width:800px){.main{padding-top:190px}.sub-menu{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:520px){.main{padding-top:175px}.top-menu{grid-template-columns:1fr}.sub-menu{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -85,7 +98,10 @@ textarea{min-height:75px}
   <div class="modal-box">
     <div class="modal-head">
       <h2 id="modalTitle"></h2>
-      <button class="close-btn" onclick="closeModal()">닫기</button>
+      <div class="head-buttons">
+        <button class="normal-btn" id="normalBtn" onclick="normalMode()">일반모드로 가기</button>
+        <button class="close-btn" onclick="closeModal()">닫기</button>
+      </div>
     </div>
 
     <div class="manager" id="managerText"></div>
@@ -97,7 +113,7 @@ textarea{min-height:75px}
           <th>군수</th>
           <th>스크린샷</th>
           <th>비고</th>
-          <th>확정</th>
+          <th>상태</th>
         </tr>
       </thead>
       <tbody id="listBody"></tbody>
@@ -121,6 +137,31 @@ textarea{min-height:75px}
   </div>
 </div>
 
+<div class="modal" id="editModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>명단 수정</h2>
+      <button class="close-btn" onclick="document.getElementById('editModal').style.display='none'">닫기</button>
+    </div>
+
+    <input id="editNick" placeholder="닉네임">
+    <input id="editRank" placeholder="군수">
+    <textarea id="editNote" placeholder="비고"></textarea>
+
+    <div class="edit-small">현재 스크린샷</div>
+    <div id="editCurrentFiles"></div>
+
+    <div class="edit-small">스크린샷 새로 올리기</div>
+    <label>스크린샷 1 교체</label>
+    <input id="editFile1" type="file" accept="image/*">
+
+    <label>스크린샷 2 교체</label>
+    <input id="editFile2" type="file" accept="image/*">
+
+    <button class="save-btn" onclick="saveEdit()">수정 저장</button>
+  </div>
+</div>
+
 <div class="modal" id="ruleModal">
   <div class="modal-box">
     <div class="modal-head">
@@ -138,6 +179,9 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentTier = "";
 let adminOk = false;
+let editingId = null;
+let editingFile1 = null;
+let editingFile2 = null;
 
 let count = 3;
 const timer = setInterval(()=>{
@@ -158,6 +202,7 @@ async function openTier(tier, manager){
   document.getElementById("modalTitle").innerText = tier + " 현황";
   document.getElementById("managerText").innerText = "담당자 : " + manager;
   document.getElementById("adminForm").style.display = adminOk ? "block" : "none";
+  document.getElementById("normalBtn").style.display = adminOk ? "inline-block" : "none";
   document.getElementById("tierModal").style.display = "flex";
   await loadList();
 }
@@ -171,6 +216,7 @@ function adminLogin(){
   if(pw === "8282"){
     adminOk = true;
     document.getElementById("adminForm").style.display="block";
+    document.getElementById("normalBtn").style.display="inline-block";
     alert("운영진 모드가 활성화되었습니다.");
     loadList();
   }else{
@@ -178,12 +224,27 @@ function adminLogin(){
   }
 }
 
+function normalMode(){
+  adminOk = false;
+  document.getElementById("adminForm").style.display="none";
+  document.getElementById("normalBtn").style.display="none";
+  alert("일반모드로 전환되었습니다.");
+  loadList();
+}
+
 async function uploadFile(file, folder){
   if(!file) return null;
 
-  const safeFolder = folder.replaceAll("/","_");
-  const ext = file.name.split(".").pop() || "jpg";
-  const fileName = `${safeFolder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const ext = (file.name.split(".").pop() || "jpg")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+  const safeFolder = String(folder || "etc")
+    .replaceAll("/", "_")
+    .replaceAll(" ", "_")
+    .replace(/[^a-zA-Z0-9가-힣_-]/g, "");
+
+  const fileName = `${safeFolder}_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
   const { error } = await db.storage
     .from("liquid-files")
@@ -205,10 +266,7 @@ async function uploadFile(file, folder){
 }
 
 async function saveMember(){
-  if(!adminOk){
-    alert("운영진 모드에서만 등록 가능합니다.");
-    return;
-  }
+  if(!adminOk) return alert("운영진 모드에서만 등록 가능합니다.");
 
   const nickname = document.getElementById("nick").value.trim();
   const military_rank = document.getElementById("rank").value.trim();
@@ -216,10 +274,7 @@ async function saveMember(){
   const f1 = document.getElementById("file1").files[0];
   const f2 = document.getElementById("file2").files[0];
 
-  if(!nickname){
-    alert("닉네임을 입력해주세요.");
-    return;
-  }
+  if(!nickname) return alert("닉네임을 입력해주세요.");
 
   const file1_url = await uploadFile(f1, currentTier);
   const file2_url = await uploadFile(f2, currentTier);
@@ -234,10 +289,7 @@ async function saveMember(){
     status: "pending"
   });
 
-  if(error){
-    alert("등록 실패: " + error.message);
-    return;
-  }
+  if(error) return alert("등록 실패: " + error.message);
 
   alert("등록되었습니다.");
 
@@ -284,13 +336,15 @@ async function loadList(){
         <td>${shots}</td>
         <td>${escapeHtml(row.career || "")}</td>
         <td>
-          ${confirmed ? `<span class="badge">확정!</span>` :
-          adminOk ? `<button class="confirm-btn" onclick="confirmMember(${row.id})">확정하기</button>` : `-`}
+          ${confirmed 
+            ? `<span class="badge badge-ok">확정!</span>` 
+            : `<span class="badge badge-wait">지원중</span>`
+          }
 
           ${adminOk ? `
-            <br>
-            <button class="confirm-btn" style="background:#2b7cff" onclick="editMember(${row.id}, '${escapeJs(row.nickname)}', '${escapeJs(row.military_rank)}', '${escapeJs(row.career)}')">수정</button>
-            <button class="confirm-btn" style="background:#777" onclick="deleteMember(${row.id})">삭제</button>
+            ${!confirmed ? `<button class="confirm-btn" onclick="confirmMember(${row.id})">확정하기</button>` : ""}
+            <button class="edit-btn" onclick="openEdit(${row.id})">수정</button>
+            <button class="delete-btn" onclick="deleteMember(${row.id})">삭제</button>
           ` : ""}
         </td>
       </tr>
@@ -313,30 +367,79 @@ async function confirmMember(id){
   loadList();
 }
 
-async function editMember(id, oldNick, oldRank, oldCareer){
+async function openEdit(id){
   if(!adminOk) return alert("운영진 모드에서만 가능합니다.");
 
-  const nickname = prompt("닉네임 수정", oldNick);
-  if(nickname === null) return;
+  const { data, error } = await db
+    .from("liquid_applications")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  const military_rank = prompt("군수 수정", oldRank);
-  if(military_rank === null) return;
+  if(error) return alert("불러오기 실패: " + error.message);
 
-  const career = prompt("비고 수정", oldCareer);
-  if(career === null) return;
+  editingId = id;
+  editingFile1 = data.file1_url;
+  editingFile2 = data.file2_url;
+
+  document.getElementById("editNick").value = data.nickname || "";
+  document.getElementById("editRank").value = data.military_rank || "";
+  document.getElementById("editNote").value = data.career || "";
+  document.getElementById("editFile1").value = "";
+  document.getElementById("editFile2").value = "";
+
+  renderEditFiles();
+  document.getElementById("editModal").style.display="flex";
+}
+
+function renderEditFiles(){
+  document.getElementById("editCurrentFiles").innerHTML = `
+    <div>
+      스크린샷 1 :
+      ${editingFile1 ? `<a class="img-link" href="${editingFile1}" target="_blank">보기</a>
+      <button class="delete-btn" style="width:auto;padding:8px 14px" onclick="removeEditFile(1)">삭제</button>` : "-"}
+    </div>
+    <div>
+      스크린샷 2 :
+      ${editingFile2 ? `<a class="img-link" href="${editingFile2}" target="_blank">보기</a>
+      <button class="delete-btn" style="width:auto;padding:8px 14px" onclick="removeEditFile(2)">삭제</button>` : "-"}
+    </div>
+  `;
+}
+
+function removeEditFile(num){
+  if(num === 1) editingFile1 = null;
+  if(num === 2) editingFile2 = null;
+  renderEditFiles();
+}
+
+async function saveEdit(){
+  if(!adminOk) return alert("운영진 모드에서만 가능합니다.");
+
+  const newFile1 = document.getElementById("editFile1").files[0];
+  const newFile2 = document.getElementById("editFile2").files[0];
+
+  let file1_url = editingFile1;
+  let file2_url = editingFile2;
+
+  if(newFile1) file1_url = await uploadFile(newFile1, currentTier);
+  if(newFile2) file2_url = await uploadFile(newFile2, currentTier);
 
   const { error } = await db
     .from("liquid_applications")
     .update({
-      nickname,
-      military_rank,
-      career
+      nickname: document.getElementById("editNick").value.trim(),
+      military_rank: document.getElementById("editRank").value.trim(),
+      career: document.getElementById("editNote").value.trim(),
+      file1_url,
+      file2_url
     })
-    .eq("id", id);
+    .eq("id", editingId);
 
   if(error) return alert("수정 실패: " + error.message);
 
   alert("수정되었습니다.");
+  document.getElementById("editModal").style.display="none";
   loadList();
 }
 
@@ -363,14 +466,7 @@ function escapeHtml(text){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-
-function escapeJs(text){
-  return String(text || "")
-    .replaceAll("\\","\\\\")
-    .replaceAll("'","\\'")
-    .replaceAll("\n"," ");
-}
 </script>
-  
+
 </body>
 </html>
