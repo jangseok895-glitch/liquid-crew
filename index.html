@@ -133,7 +133,7 @@ textarea{min-height:75px}
 <body>
 
 <div id="intro">
-  <video id="introVideo" autoplay muted loop playsinline>
+<video id="introVideo" autoplay playsinline poster="https://i.ibb.co/KxqK35Hx/11.jpg">
     <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
   </video>
 
@@ -634,6 +634,18 @@ function escapeHtml(text){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+
+  window.addEventListener("DOMContentLoaded", () => {
+  const video = document.getElementById("introVideo");
+
+  if(video){
+    video.addEventListener("ended", () => {
+      video.style.display = "none";
+      document.getElementById("intro").style.background =
+        "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+    });
+  }
+});
 </script>
 
 </body>
