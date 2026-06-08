@@ -14,19 +14,24 @@ body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;co
 .intro-box{z-index:2;text-align:center;background:rgba(0,0,0,.55);padding:30px 45px;border-radius:22px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 35px rgba(0,170,255,.55)}
 #count{font-size:95px;font-weight:900;color:#8ee7ff}
 
-.main{min-height:100vh;background:#03030c url('https://i.ibb.co/PvHqVGW0/2.png') top center/contain no-repeat fixed;padding:215px 18px 40px}
-.content{width:900px;margin:0 auto}
-.menu-panel{padding:16px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
+.main{min-height:100vh;background:#03030c url('https://i.ibb.co/PvHqVGW0/2.png') top center/contain no-repeat fixed;padding:190px 18px 40px}
+.content{width:760px;margin:0 auto}
+.menu-panel{padding:15px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
 .menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
 .top-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .sub-menu{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 button{cursor:pointer;border:none}
 .menu-btn{border-radius:14px;font-weight:900;color:white;border:1px solid rgba(255,255,255,.25);box-shadow:0 5px 14px rgba(0,0,0,.45)}
 .big-btn{height:58px;font-size:18px}
-.small-btn{height:44px;font-size:14px}
+.small-btn{height:44px;font-size:16px}
 .kakao{background:linear-gradient(135deg,#ffe252,#ff9f1a);color:#111}
 .rule{background:linear-gradient(135deg,#333,#555)}
-.tier{background:linear-gradient(135deg,#2357b9,#8a23d7)}
+.pro{background:linear-gradient(135deg,#1e90ff,#7a5cff)}
+.main-tier{background:linear-gradient(135deg,#00b894,#0984e3)}
+.t1{background:linear-gradient(135deg,#fd79a8,#6c5ce7)}
+.t2{background:linear-gradient(135deg,#ff7675,#d63031)}
+.t3{background:linear-gradient(135deg,#00cec9,#0984e3)}
+.t4{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
 
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-box{width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
@@ -36,6 +41,7 @@ button{cursor:pointer;border:none}
 .close-btn,.normal-btn{border-radius:10px;padding:8px 13px;font-weight:900}
 .normal-btn{background:#207cff;color:white}
 .manager{margin-bottom:15px;color:#ffd66b;font-weight:bold}
+.manager-edit{margin-left:10px;background:#444;color:white;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:900}
 
 table{width:100%;border-collapse:collapse;margin-top:10px;background:rgba(255,255,255,.04);table-layout:fixed}
 th,td{border:1px solid rgba(255,255,255,.16);padding:10px;text-align:center;font-size:15px;word-break:keep-all}
@@ -60,6 +66,10 @@ textarea{min-height:75px}
 .mini-action.gray{background:#777}
 .action-row{display:flex;gap:5px;justify-content:center;margin-top:7px;flex-wrap:nowrap}
 .edit-small{font-size:13px;color:#ddd;margin:6px 0}
+
+.image-view-box{width:900px;max-height:90vh;overflow:auto;border-radius:18px;background:#050713;padding:18px;border:1px solid rgba(120,220,255,.45)}
+.image-view-head{display:flex;justify-content:flex-end;margin-bottom:10px}
+.big-image{width:100%;border-radius:12px}
 </style>
 </head>
 
@@ -83,12 +93,12 @@ textarea{min-height:75px}
       </div>
 
       <div class="sub-menu">
-        <button class="menu-btn small-btn tier" onclick="openTier('프로','케디치')">프로</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('강주/주','케디치 / 미정')">강주/주</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('1군','블랙')">1군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('2군','블랙')">2군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('3군','블랙')">3군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('4군','블랙')">4군</button>
+        <button class="menu-btn small-btn pro" onclick="openTier('프로')">프로</button>
+        <button class="menu-btn small-btn main-tier" onclick="openTier('강주/주')">강주/주</button>
+        <button class="menu-btn small-btn t1" onclick="openTier('1군')">1군</button>
+        <button class="menu-btn small-btn t2" onclick="openTier('2군')">2군</button>
+        <button class="menu-btn small-btn t3" onclick="openTier('3군')">3군</button>
+        <button class="menu-btn small-btn t4" onclick="openTier('4군')">4군</button>
       </div>
     </div>
   </div>
@@ -101,11 +111,14 @@ textarea{min-height:75px}
       <div class="head-buttons">
         <button class="normal-btn" id="normalBtn" onclick="normalMode()" style="display:none">일반모드로 가기</button>
         <button class="normal-btn" id="adminTopBtn" onclick="adminLogin()">운영진 모드</button>
-        <button class="close-btn" onclick="closeModal()">닫기</button>
+        <button class="close-btn" onclick="closeTierModal()">닫기</button>
       </div>
     </div>
 
-    <div class="manager" id="managerText"></div>
+    <div class="manager">
+      담당자 : <span id="managerName"></span>
+      <button class="manager-edit" onclick="editManager()">담당자수정</button>
+    </div>
 
     <table>
       <thead>
@@ -131,7 +144,7 @@ textarea{min-height:75px}
       <label>추가 스크린샷 2</label>
       <input id="file2" type="file" accept="image/*">
 
-      <button class="menu-btn big-btn tier" style="width:100%" onclick="saveMember()">명단 등록하기</button>
+      <button class="menu-btn big-btn pro" style="width:100%" onclick="saveMember()">명단 등록하기</button>
     </div>
   </div>
 </div>
@@ -140,7 +153,7 @@ textarea{min-height:75px}
   <div class="modal-box">
     <div class="modal-head">
       <h2>명단 수정</h2>
-      <button class="close-btn" onclick="document.getElementById('editModal').style.display='none'">닫기</button>
+      <button class="close-btn" onclick="closeEditModal()">닫기</button>
     </div>
 
     <input id="editNick" placeholder="닉네임">
@@ -157,7 +170,7 @@ textarea{min-height:75px}
     <label>스크린샷 2 교체</label>
     <input id="editFile2" type="file" accept="image/*">
 
-    <button class="menu-btn big-btn tier" style="width:100%" onclick="saveEdit()">수정 저장</button>
+    <button class="menu-btn big-btn pro" style="width:100%" onclick="saveEdit()">수정 저장</button>
   </div>
 </div>
 
@@ -165,9 +178,18 @@ textarea{min-height:75px}
   <div class="modal-box">
     <div class="modal-head">
       <h2>규정 / 개요</h2>
-      <button class="close-btn" onclick="document.getElementById('ruleModal').style.display='none'">닫기</button>
+      <button class="close-btn" onclick="closeRule()">닫기</button>
     </div>
     <img class="rule-img" src="https://i.ibb.co/QvgrXYkH/image.jpg">
+  </div>
+</div>
+
+<div class="modal" id="imageModal">
+  <div class="image-view-box">
+    <div class="image-view-head">
+      <button class="close-btn" onclick="closeImage()">닫기</button>
+    </div>
+    <img id="bigImage" class="big-image" src="">
   </div>
 </div>
 
@@ -175,6 +197,15 @@ textarea{min-height:75px}
 const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
 const SUPABASE_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const managerMap = {
+  "프로":"케디치",
+  "강주/주":"케디치 / 미정",
+  "1군":"블랙",
+  "2군":"블랙",
+  "3군":"블랙",
+  "4군":"블랙"
+};
 
 let currentTier = "";
 let adminOk = false;
@@ -192,23 +223,46 @@ const timer = setInterval(()=>{
   }
 },1000);
 
-function openRule(){
-  document.getElementById("ruleModal").style.display="flex";
+window.onpopstate = function(){
+  closeTopModal();
+};
+
+function pushStep(){
+  history.pushState({modal:true},"");
 }
 
-async function openTier(tier, manager){
+function closeTopModal(){
+  if(document.getElementById("imageModal").style.display==="flex") return closeImage(false);
+  if(document.getElementById("editModal").style.display==="flex") return closeEditModal(false);
+  if(document.getElementById("ruleModal").style.display==="flex") return closeRule(false);
+  if(document.getElementById("tierModal").style.display==="flex") return closeTierModal(false);
+}
+
+function openRule(){
+  document.getElementById("ruleModal").style.display="flex";
+  pushStep();
+}
+
+function closeRule(back=true){
+  document.getElementById("ruleModal").style.display="none";
+  if(back) history.back();
+}
+
+async function openTier(tier){
   currentTier = tier;
   document.getElementById("modalTitle").innerText = tier + " 현황";
-  document.getElementById("managerText").innerText = "담당자 : " + manager;
+  document.getElementById("managerName").innerText = localStorage.getItem("manager_" + tier) || managerMap[tier] || "미정";
   document.getElementById("adminForm").style.display = adminOk ? "block" : "none";
   document.getElementById("normalBtn").style.display = adminOk ? "inline-block" : "none";
   document.getElementById("adminTopBtn").style.display = adminOk ? "none" : "inline-block";
   document.getElementById("tierModal").style.display = "flex";
+  pushStep();
   await loadList();
 }
 
-function closeModal(){
+function closeTierModal(back=true){
   document.getElementById("tierModal").style.display="none";
+  if(back) history.back();
 }
 
 function adminLogin(){
@@ -230,6 +284,18 @@ function normalMode(){
   document.getElementById("normalBtn").style.display="none";
   document.getElementById("adminTopBtn").style.display="inline-block";
   loadList();
+}
+
+function editManager(){
+  const pw = prompt("운영진 비밀번호를 입력하세요.");
+  if(pw !== "8282") return alert("비밀번호가 틀렸습니다.");
+
+  const now = document.getElementById("managerName").innerText;
+  const next = prompt("담당자를 입력하세요.", now);
+  if(next === null) return;
+
+  localStorage.setItem("manager_" + currentTier, next.trim() || "미정");
+  document.getElementById("managerName").innerText = next.trim() || "미정";
 }
 
 async function uploadFile(file, folder){
@@ -326,8 +392,8 @@ async function loadList(){
 
   body.innerHTML = data.map(row=>{
     const shots = `
-      ${row.file1_url ? `<a class="img-link" href="${row.file1_url}" target="_blank">사진1</a>` : ""}
-      ${row.file2_url ? `<a class="img-link" href="${row.file2_url}" target="_blank">사진2</a>` : ""}
+      ${row.file1_url ? `<button class="mini-action blue" onclick="openImage('${row.file1_url}')">사진1</button>` : ""}
+      ${row.file2_url ? `<button class="mini-action blue" onclick="openImage('${row.file2_url}')">사진2</button>` : ""}
     `.trim() || "-";
 
     const confirmed = row.status === "confirmed";
@@ -340,7 +406,7 @@ async function loadList(){
         <td>${escapeHtml(row.career || "")}</td>
         <td>
           ${confirmed 
-            ? `<span class="badge badge-ok">확정!</span>` 
+            ? `<span class="badge badge-ok">확정</span>` 
             : `<span class="badge badge-wait">지원중</span>`
           }
 
@@ -355,6 +421,18 @@ async function loadList(){
       </tr>
     `;
   }).join("");
+}
+
+function openImage(url){
+  document.getElementById("bigImage").src = url;
+  document.getElementById("imageModal").style.display = "flex";
+  pushStep();
+}
+
+function closeImage(back=true){
+  document.getElementById("imageModal").style.display = "none";
+  document.getElementById("bigImage").src = "";
+  if(back) history.back();
 }
 
 async function confirmMember(id){
@@ -394,18 +472,24 @@ async function openEdit(id){
 
   renderEditFiles();
   document.getElementById("editModal").style.display="flex";
+  pushStep();
+}
+
+function closeEditModal(back=true){
+  document.getElementById("editModal").style.display="none";
+  if(back) history.back();
 }
 
 function renderEditFiles(){
   document.getElementById("editCurrentFiles").innerHTML = `
     <div>
       스크린샷 1 :
-      ${editingFile1 ? `<a class="img-link" href="${editingFile1}" target="_blank">보기</a>
+      ${editingFile1 ? `<button class="mini-action blue" onclick="openImage('${editingFile1}')">보기</button>
       <button class="mini-action gray" onclick="removeEditFile(1)">삭제</button>` : "-"}
     </div>
     <div>
       스크린샷 2 :
-      ${editingFile2 ? `<a class="img-link" href="${editingFile2}" target="_blank">보기</a>
+      ${editingFile2 ? `<button class="mini-action blue" onclick="openImage('${editingFile2}')">보기</button>
       <button class="mini-action gray" onclick="removeEditFile(2)">삭제</button>` : "-"}
     </div>
   `;
