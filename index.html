@@ -81,12 +81,12 @@ textarea{min-height:75px}
 <body>
 
 <audio id="enterSound" preload="auto">
-  <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/jangseok895-glitch/asia-ox-sound/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3" type="audio/mpeg">
 </audio>
 
 <div id="intro">
   <video id="introVideo" autoplay muted playsinline webkit-playsinline preload="auto">
-    <source src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/jangseok895-glitch/asia-ox-sound/main/%EB%A6%AC%ED%80%B4%EB%93%9C%EB%A9%94%EC%9D%B8.mp4" type="video/mp4">
   </video>
 
   <div class="intro-box">
@@ -233,31 +233,32 @@ window.addEventListener("DOMContentLoaded", () => {
   const intro = document.getElementById("intro");
   const isMobile = /Android|iPhone|iPad|iPod|KAKAOTALK/i.test(navigator.userAgent);
 
+  if(!video) return;
+
   if(isMobile){
-    if(video) video.style.display = "none";
+    video.style.display = "none";
     intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
     return;
   }
 
-  if(video){
-    video.muted = true;
-    video.playsInline = true;
-    video.load();
+  video.muted = true;
+  video.playsInline = true;
+  video.currentTime = 0;
+  video.load();
 
-    const playPromise = video.play();
+  const playPromise = video.play();
 
-    if(playPromise){
-      playPromise.catch(() => {
-        video.style.display = "none";
-        intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
-      });
-    }
-
-    video.addEventListener("ended", () => {
+  if(playPromise){
+    playPromise.catch(() => {
       video.style.display = "none";
       intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
     });
   }
+
+  video.addEventListener("ended", () => {
+    video.style.display = "none";
+    intro.style.background = "#03030c url('https://i.ibb.co/KxqK35Hx/11.jpg') center/contain no-repeat";
+  });
 });
 
 function enterSite(){
