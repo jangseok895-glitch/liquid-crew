@@ -293,12 +293,13 @@ let editingFile2 = null;
 function enterSite(){
   const intro = document.getElementById("intro");
   const video = document.getElementById("introVideo");
-  const sound = document.getElementById("enterSound");
 
-  if(sound){
-    sound.currentTime = 0;
-    sound.play().catch(()=>{});
-  }
+  const sound = new Audio("https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3");
+  sound.volume = 1;
+  sound.currentTime = 0;
+  sound.play().catch(err => {
+    console.log("효과음 재생 실패:", err);
+  });
 
   intro.style.opacity = "0";
   intro.style.transition = ".6s";
