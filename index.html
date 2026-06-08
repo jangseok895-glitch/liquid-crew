@@ -13,13 +13,12 @@ body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;co
 #intro:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
 .intro-box{z-index:2;text-align:center;background:rgba(0,0,0,.55);padding:30px 45px;border-radius:22px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 35px rgba(0,170,255,.55)}
 #count{font-size:95px;font-weight:900;color:#8ee7ff}
-
 .main{min-height:100vh;background:url('https://i.ibb.co/PvHqVGW0/2.png') top center/cover no-repeat fixed;padding:215px 18px 40px}
 .content{max-width:900px;margin:0 auto}
 .menu-panel{padding:16px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
 .menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
 .top-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.sub-menu{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.sub-menu{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 button{cursor:pointer;border:none}
 .menu-btn{border-radius:14px;font-weight:900;color:white;border:1px solid rgba(255,255,255,.25);box-shadow:0 5px 14px rgba(0,0,0,.45)}
 .big-btn{height:58px;font-size:18px}
@@ -27,14 +26,12 @@ button{cursor:pointer;border:none}
 .kakao{background:linear-gradient(135deg,#ffe252,#ff9f1a);color:#111}
 .rule{background:linear-gradient(135deg,#333,#555)}
 .tier{background:linear-gradient(135deg,#2357b9,#8a23d7)}
-
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-box{width:100%;max-width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-head h2{margin:0;color:#9eefff}
 .close-btn{border-radius:10px;padding:8px 13px;font-weight:900}
 .manager{margin-bottom:15px;color:#ffd66b;font-weight:bold}
-
 table{width:100%;border-collapse:collapse;margin-top:10px;background:rgba(255,255,255,.04)}
 th,td{border:1px solid rgba(255,255,255,.16);padding:10px;text-align:center}
 th{background:rgba(70,170,255,.25);color:#bfeeff}
@@ -43,13 +40,12 @@ th{background:rgba(70,170,255,.25);color:#bfeeff}
 .admin-btn{background:#222;color:#eee;border:1px solid rgba(255,255,255,.25)}
 .save-btn{background:linear-gradient(135deg,#20d6ff,#7a5cff);color:white}
 .confirm-btn{background:#ff3434;color:white}
-
 .form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
-input,textarea,select{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
+input,textarea{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
 textarea{min-height:75px}
 .img-link{color:#7ee7ff;text-decoration:underline;font-weight:900}
 .rule-img{width:100%;border-radius:14px}
-@media(max-width:800px){.main{padding-top:190px}.sub-menu{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.main{padding-top:190px}.sub-menu{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:520px){.main{padding-top:175px}.top-menu{grid-template-columns:1fr}.sub-menu{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -75,8 +71,7 @@ textarea{min-height:75px}
 
       <div class="sub-menu">
         <button class="menu-btn small-btn tier" onclick="openTier('프로','케디치')">프로</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('강주력','케디치')">강주력</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('주력','미정')">주력</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('강주/주','케디치 / 미정')">강주/주</button>
         <button class="menu-btn small-btn tier" onclick="openTier('1군','블랙')">1군</button>
         <button class="menu-btn small-btn tier" onclick="openTier('2군','블랙')">2군</button>
         <button class="menu-btn small-btn tier" onclick="openTier('3군','블랙')">3군</button>
@@ -137,7 +132,7 @@ textarea{min-height:75px}
 </div>
 
 <script>
-const SUPABASE_URL = "https://xyibdanmecakevhtdaji.supabase.co";
+const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
 const SUPABASE_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -224,23 +219,25 @@ async function compressImage(file){
 async function uploadFile(file, folder){
   if(!file) return null;
 
-  const compressed = await compressImage(file);
-  const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+  try{
+    const compressed = await compressImage(file);
+    const safeFolder = folder.replaceAll("/","_");
+    const fileName = `${safeFolder}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
 
-  const { error } = await db.storage
-    .from("liquid-files")
-    .upload(fileName, compressed);
+    const { error } = await db.storage
+      .from("liquid-files")
+      .upload(fileName, compressed);
 
-  if(error){
-    alert("파일 업로드 실패: " + error.message);
-    throw error;
+    if(error) return null;
+
+    const { data } = db.storage
+      .from("liquid-files")
+      .getPublicUrl(fileName);
+
+    return data.publicUrl;
+  }catch(e){
+    return null;
   }
-
-  const { data } = db.storage
-    .from("liquid-files")
-    .getPublicUrl(fileName);
-
-  return data.publicUrl;
 }
 
 async function saveMember(){
@@ -312,7 +309,7 @@ async function loadList(){
     const shots = `
       ${row.file1_url ? `<a class="img-link" href="${row.file1_url}" target="_blank">사진1</a>` : ""}
       ${row.file2_url ? `<a class="img-link" href="${row.file2_url}" target="_blank">사진2</a>` : ""}
-    ` || "-";
+    `.trim() || "-";
 
     const confirmed = row.status === "confirmed";
 
