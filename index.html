@@ -2,49 +2,270 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>리퀴드 크루</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리퀴드크루</title>
 
 <style>
-body{
-    margin:0;
-    background:url('https://i.ibb.co/PvHqVGW0/2.png') center center / cover no-repeat fixed;
-    min-height:100vh;
-    font-family:'Malgun Gothic';
+*{
+  box-sizing:border-box;
 }
 
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Malgun Gothic', Arial, sans-serif;
+  background:#050510;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* 입장 카운트 */
 #intro{
-    position:fixed;
-    inset:0;
-    background:black;
-    color:white;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
+  position:fixed;
+  inset:0;
+  background:url('https://i.ibb.co/zHjPvK8n/image.png') center center / cover no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+#intro::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.55);
+}
+
+.intro-box{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  padding:30px 45px;
+  border-radius:22px;
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 0 35px rgba(0,170,255,.5);
+}
+
+.intro-box h1{
+  margin:0 0 20px;
+  font-size:26px;
 }
 
 #count{
-    font-size:100px;
-    font-weight:bold;
+  font-size:90px;
+  font-weight:900;
+  color:#8ee7ff;
 }
 
-.menu-area{
-    width:80%;
-    max-width:700px;
-    margin:auto;
-    margin-top:580px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+/* 본 사이트 */
+.main{
+  min-height:100vh;
+  background:url('https://i.ibb.co/PvHqVGW0/2.png') top center / cover no-repeat fixed;
+  position:relative;
+  padding:30px 15px 60px;
+}
+
+.main::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.25);
+}
+
+.content{
+  position:relative;
+  z-index:1;
+  max-width:900px;
+  margin:0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding-bottom:45px;
+}
+
+/* 메뉴 영역 */
+.menu-panel{
+  width:100%;
+  padding:18px;
+  border-radius:24px;
+  background:rgba(3,8,25,.62);
+  border:1px solid rgba(120,210,255,.35);
+  box-shadow:0 0 35px rgba(0,130,255,.28);
+  backdrop-filter:blur(6px);
+}
+
+.menu-title{
+  text-align:center;
+  margin-bottom:15px;
+  font-size:18px;
+  color:#c8f4ff;
+  letter-spacing:2px;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
 }
 
 .menu-btn{
-    padding:15px;
-    font-size:20px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
+  border:none;
+  cursor:pointer;
+  height:54px;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:800;
+  color:white;
+  background:linear-gradient(135deg,rgba(20,90,180,.92),rgba(150,30,220,.9));
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 5px 14px rgba(0,0,0,.45);
+  transition:.2s;
+}
+
+.menu-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 18px rgba(90,220,255,.8);
+}
+
+.kakao{
+  background:linear-gradient(135deg,#ffe14a,#ff9f1a);
+  color:#111;
+}
+
+.ready{
+  background:linear-gradient(135deg,#333,#555);
+}
+
+/* 팝업 */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal-box{
+  width:100%;
+  max-width:850px;
+  max-height:88vh;
+  overflow:auto;
+  border-radius:22px;
+  background:linear-gradient(180deg,#101631,#050713);
+  border:1px solid rgba(120,220,255,.45);
+  box-shadow:0 0 35px rgba(0,180,255,.4);
+  padding:24px;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.modal-head h2{
+  margin:0;
+  color:#9eefff;
+}
+
+.close-btn{
+  border:none;
+  border-radius:10px;
+  padding:8px 13px;
+  cursor:pointer;
+  font-weight:900;
+}
+
+.manager{
+  margin-bottom:15px;
+  color:#ffd66b;
+  font-weight:bold;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  background:rgba(255,255,255,.04);
+}
+
+th,td{
+  border:1px solid rgba(255,255,255,.16);
+  padding:11px;
+  text-align:center;
+}
+
+th{
+  background:rgba(70,170,255,.25);
+  color:#bfeeff;
+}
+
+.apply-btn,
+.admin-btn{
+  margin-top:15px;
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:900;
+}
+
+.apply-btn{
+  background:linear-gradient(135deg,#20d6ff,#7a5cff);
+  color:white;
+}
+
+.admin-btn{
+  background:#222;
+  color:#eee;
+  border:1px solid rgba(255,255,255,.25);
+}
+
+/* 지원 폼 */
+.form-area{
+  display:none;
+  margin-top:18px;
+  padding:15px;
+  border-radius:16px;
+  background:rgba(255,255,255,.07);
+}
+
+.form-area input,
+.form-area textarea{
+  width:100%;
+  margin-bottom:10px;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+}
+
+.form-area textarea{
+  min-height:80px;
+}
+
+@media(max-width:700px){
+  .content{
+    padding-bottom:25px;
+  }
+
+  .menu-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .menu-btn{
+    height:50px;
+    font-size:14px;
+  }
 }
 </style>
 </head>
@@ -52,55 +273,119 @@ body{
 <body>
 
 <div id="intro">
+  <div class="intro-box">
     <h1>사이트로 이동합니다</h1>
     <div id="count">3</div>
+  </div>
 </div>
 
-<div class="menu-area">
+<div class="main">
+  <div class="content">
 
-<button class="menu-btn"
-onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">
-가입문의방 들어가기
-</button>
+    <div class="menu-panel">
+      <div class="menu-title">LIQUID CREW MENU</div>
 
-<button class="menu-btn">규정</button>
+      <div class="menu-grid">
+        <button class="menu-btn kakao" onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">가입문의방</button>
+        <button class="menu-btn ready" onclick="alert('규정은 아직 준비중입니다.')">규정</button>
 
-<button class="menu-btn">프로 현황</button>
+        <button class="menu-btn" onclick="openTier('프로 현황','케디치')">프로 현황</button>
+        <button class="menu-btn" onclick="openTier('강주력 현황','케디치')">강주력 현황</button>
+        <button class="menu-btn" onclick="openTier('주력 현황','미정')">주력 현황</button>
 
-<button class="menu-btn">강주력 현황</button>
+        <button class="menu-btn" onclick="openTier('1군 현황','블랙')">1군 현황</button>
+        <button class="menu-btn" onclick="openTier('2군 현황','블랙')">2군 현황</button>
+        <button class="menu-btn" onclick="openTier('3군 현황','블랙')">3군 현황</button>
+        <button class="menu-btn" onclick="openTier('4군 현황','블랙')">4군 현황</button>
+      </div>
+    </div>
 
-<button class="menu-btn">주력 현황</button>
+  </div>
+</div>
 
-<button class="menu-btn">1군 현황</button>
+<div class="modal" id="tierModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="modalTitle">현황</h2>
+      <button class="close-btn" onclick="closeModal()">닫기</button>
+    </div>
 
-<button class="menu-btn">2군 현황</button>
+    <div class="manager" id="managerText">담당자 : </div>
 
-<button class="menu-btn">3군 현황</button>
+    <h3>확정 멤버</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>닉네임</th>
+          <th>군표</th>
+          <th>경력사항</th>
+        </tr>
+      </thead>
+      <tbody id="memberList">
+        <tr>
+          <td colspan="3">아직 등록된 멤버가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
 
-<button class="menu-btn">4군 현황</button>
+    <button class="apply-btn" onclick="toggleApply()">지원하기</button>
 
+    <div class="form-area" id="applyForm">
+      <input type="text" placeholder="닉네임">
+      <input type="text" placeholder="군표">
+      <textarea placeholder="경력사항"></textarea>
+
+      <label>본인 신분인증 스샷</label>
+      <input type="file">
+
+      <label>군표 스샷본</label>
+      <input type="file">
+
+      <button class="apply-btn" onclick="alert('지원 기능은 Supabase 연결 후 작동됩니다.')">제출하기</button>
+    </div>
+
+    <button class="admin-btn" onclick="adminMode()">운영진 모드</button>
+  </div>
 </div>
 
 <script>
+let count = 3;
 
-let count=3;
+const timer = setInterval(() => {
+  document.getElementById("count").innerText = count;
+  count--;
 
-const timer=setInterval(()=>{
+  if(count < 0){
+    clearInterval(timer);
+    document.getElementById("intro").style.display = "none";
+  }
+}, 1000);
 
-document.getElementById("count").innerText=count;
-
-count--;
-
-if(count<0){
-
-clearInterval(timer);
-
-document.getElementById("intro").style.display="none";
-
+function openTier(title, manager){
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("managerText").innerText = "담당자 : " + manager;
+  document.getElementById("applyForm").style.display = "none";
+  document.getElementById("tierModal").style.display = "flex";
 }
 
-},1000);
+function closeModal(){
+  document.getElementById("tierModal").style.display = "none";
+}
 
+function toggleApply(){
+  const form = document.getElementById("applyForm");
+  form.style.display = form.style.display === "block" ? "none" : "block";
+}
+
+function adminMode(){
+  const pw = prompt("운영진 비밀번호를 입력하세요.");
+
+  if(pw === "8282"){
+    alert("운영진 모드입니다. 다음 단계에서 수정/승인 기능을 연결합니다.");
+  }else{
+    alert("비밀번호가 틀렸습니다.");
+  }
+}
 </script>
 
 </body>
