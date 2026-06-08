@@ -4,287 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>리퀴드크루</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:#03030c;color:white}
+#intro{position:fixed;inset:0;background:url('https://i.ibb.co/zHjPvK8n/image.png') center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:9999}
+#intro:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.intro-box{z-index:2;text-align:center;background:rgba(0,0,0,.55);padding:30px 45px;border-radius:22px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 35px rgba(0,170,255,.55)}
+#count{font-size:95px;font-weight:900;color:#8ee7ff}
 
-body{
-  margin:0;
-  font-family:'Malgun Gothic', Arial, sans-serif;
-  background:#03030c;
-  color:white;
-  overflow-x:hidden;
-}
+.main{min-height:100vh;background:url('https://i.ibb.co/PvHqVGW0/2.png') top center/cover no-repeat fixed;padding:215px 18px 40px}
+.content{max-width:900px;margin:0 auto}
+.menu-panel{padding:16px;border-radius:22px;background:rgba(3,8,25,.62);border:1px solid rgba(120,210,255,.38);box-shadow:0 0 30px rgba(0,130,255,.25)}
+.menu-title{text-align:center;margin-bottom:13px;font-size:17px;color:#c8f4ff;letter-spacing:3px}
+.top-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.sub-menu{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+button{cursor:pointer;border:none}
+.menu-btn{border-radius:14px;font-weight:900;color:white;border:1px solid rgba(255,255,255,.25);box-shadow:0 5px 14px rgba(0,0,0,.45)}
+.big-btn{height:58px;font-size:18px}
+.small-btn{height:44px;font-size:14px}
+.kakao{background:linear-gradient(135deg,#ffe252,#ff9f1a);color:#111}
+.rule{background:linear-gradient(135deg,#333,#555)}
+.tier{background:linear-gradient(135deg,#2357b9,#8a23d7)}
 
-/* 입장 카운트 화면 */
-#intro{
-  position:fixed;
-  inset:0;
-  background:url('https://i.ibb.co/zHjPvK8n/image.png') center center / cover no-repeat;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-box{width:100%;max-width:950px;max-height:88vh;overflow:auto;border-radius:22px;background:linear-gradient(180deg,#101631,#050713);border:1px solid rgba(120,220,255,.45);box-shadow:0 0 35px rgba(0,180,255,.4);padding:24px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modal-head h2{margin:0;color:#9eefff}
+.close-btn{border-radius:10px;padding:8px 13px;font-weight:900}
+.manager{margin-bottom:15px;color:#ffd66b;font-weight:bold}
 
-#intro::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.45);
-}
+table{width:100%;border-collapse:collapse;margin-top:10px;background:rgba(255,255,255,.04)}
+th,td{border:1px solid rgba(255,255,255,.16);padding:10px;text-align:center}
+th{background:rgba(70,170,255,.25);color:#bfeeff}
+.badge{display:inline-block;background:red;color:white;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900}
+.admin-btn,.save-btn,.confirm-btn{margin-top:12px;width:100%;height:45px;border-radius:12px;font-weight:900;font-size:15px}
+.admin-btn{background:#222;color:#eee;border:1px solid rgba(255,255,255,.25)}
+.save-btn{background:linear-gradient(135deg,#20d6ff,#7a5cff);color:white}
+.confirm-btn{background:#ff3434;color:white}
 
-.intro-box{
-  position:relative;
-  z-index:2;
-  text-align:center;
-  padding:30px 45px;
-  border-radius:22px;
-  background:rgba(0,0,0,.55);
-  border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 0 35px rgba(0,170,255,.55);
-}
-
-.intro-box h1{
-  margin:0 0 18px;
-  font-size:28px;
-}
-
-#count{
-  font-size:95px;
-  font-weight:900;
-  color:#8ee7ff;
-}
-
-/* 메인 */
-.main{
-  min-height:100vh;
-  background:url('https://i.ibb.co/PvHqVGW0/2.png') top center / cover no-repeat fixed;
-  position:relative;
-  padding:215px 18px 40px;
-}
-
-.main::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.10);
-}
-
-.content{
-  position:relative;
-  z-index:1;
-  max-width:900px;
-  margin:0 auto;
-}
-
-/* 메뉴 */
-.menu-panel{
-  width:100%;
-  padding:16px;
-  border-radius:22px;
-  background:rgba(3,8,25,.62);
-  border:1px solid rgba(120,210,255,.38);
-  box-shadow:0 0 30px rgba(0,130,255,.25);
-  backdrop-filter:blur(5px);
-}
-
-.menu-title{
-  text-align:center;
-  margin-bottom:13px;
-  font-size:17px;
-  color:#c8f4ff;
-  letter-spacing:3px;
-}
-
-.top-menu{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-bottom:12px;
-}
-
-.sub-menu{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-}
-
-.menu-btn{
-  border:none;
-  cursor:pointer;
-  border-radius:14px;
-  font-weight:900;
-  color:white;
-  border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 5px 14px rgba(0,0,0,.45);
-  transition:.2s;
-}
-
-.menu-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 0 18px rgba(90,220,255,.75);
-}
-
-.big-btn{
-  height:58px;
-  font-size:18px;
-}
-
-.small-btn{
-  height:44px;
-  font-size:14px;
-}
-
-.kakao{
-  background:linear-gradient(135deg,#ffe252,#ff9f1a);
-  color:#111;
-}
-
-.rule{
-  background:linear-gradient(135deg,#333,#555);
-}
-
-.tier{
-  background:linear-gradient(135deg,#2357b9,#8a23d7);
-}
-
-/* 팝업 */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.72);
-  z-index:1000;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.modal-box{
-  width:100%;
-  max-width:850px;
-  max-height:88vh;
-  overflow:auto;
-  border-radius:22px;
-  background:linear-gradient(180deg,#101631,#050713);
-  border:1px solid rgba(120,220,255,.45);
-  box-shadow:0 0 35px rgba(0,180,255,.4);
-  padding:24px;
-}
-
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.modal-head h2{
-  margin:0;
-  color:#9eefff;
-}
-
-.close-btn{
-  border:none;
-  border-radius:10px;
-  padding:8px 13px;
-  cursor:pointer;
-  font-weight:900;
-}
-
-.manager{
-  margin-bottom:15px;
-  color:#ffd66b;
-  font-weight:bold;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-  background:rgba(255,255,255,.04);
-}
-
-th,td{
-  border:1px solid rgba(255,255,255,.16);
-  padding:11px;
-  text-align:center;
-}
-
-th{
-  background:rgba(70,170,255,.25);
-  color:#bfeeff;
-}
-
-.apply-btn,
-.admin-btn{
-  margin-top:15px;
-  width:100%;
-  height:48px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:16px;
-  font-weight:900;
-}
-
-.apply-btn{
-  background:linear-gradient(135deg,#20d6ff,#7a5cff);
-  color:white;
-}
-
-.admin-btn{
-  background:#222;
-  color:#eee;
-  border:1px solid rgba(255,255,255,.25);
-}
-
-.form-area{
-  display:none;
-  margin-top:18px;
-  padding:15px;
-  border-radius:16px;
-  background:rgba(255,255,255,.07);
-}
-
-.form-area input,
-.form-area textarea{
-  width:100%;
-  margin-bottom:10px;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-}
-
-.form-area textarea{
-  min-height:80px;
-}
-
-@media(max-width:800px){
-  .main{
-    padding-top:190px;
-  }
-
-  .sub-menu{
-    grid-template-columns:repeat(4,1fr);
-  }
-}
-
-@media(max-width:520px){
-  .main{
-    padding-top:175px;
-  }
-
-  .top-menu{
-    grid-template-columns:1fr;
-  }
-
-  .sub-menu{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
+.form-area{display:none;margin-top:15px;padding:15px;border-radius:16px;background:rgba(255,255,255,.07)}
+input,textarea,select{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:none}
+textarea{min-height:75px}
+.img-link{color:#7ee7ff;text-decoration:underline;font-weight:900}
+.rule-img{width:100%;border-radius:14px}
+@media(max-width:800px){.main{padding-top:190px}.sub-menu{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){.main{padding-top:175px}.top-menu{grid-template-columns:1fr}.sub-menu{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 
@@ -299,111 +65,301 @@ th{
 
 <div class="main">
   <div class="content">
-
     <div class="menu-panel">
       <div class="menu-title">LIQUID CREW MENU</div>
 
       <div class="top-menu">
         <button class="menu-btn big-btn kakao" onclick="window.open('https://open.kakao.com/o/gCJzBB8h')">가입문의방 들어가기</button>
-        <button class="menu-btn big-btn rule" onclick="alert('규정은 아직 준비중입니다.')">규정</button>
+        <button class="menu-btn big-btn rule" onclick="openRule()">규정 / 개요</button>
       </div>
 
       <div class="sub-menu">
-        <button class="menu-btn small-btn tier" onclick="openTier('프로 현황','케디치')">프로</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('강주력 현황','케디치')">강주력</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('주력 현황','미정')">주력</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('1군 현황','블랙')">1군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('2군 현황','블랙')">2군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('3군 현황','블랙')">3군</button>
-        <button class="menu-btn small-btn tier" onclick="openTier('4군 현황','블랙')">4군</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('프로','케디치')">프로</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('강주력','케디치')">강주력</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('주력','미정')">주력</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('1군','블랙')">1군</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('2군','블랙')">2군</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('3군','블랙')">3군</button>
+        <button class="menu-btn small-btn tier" onclick="openTier('4군','블랙')">4군</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <div class="modal" id="tierModal">
   <div class="modal-box">
     <div class="modal-head">
-      <h2 id="modalTitle">현황</h2>
+      <h2 id="modalTitle"></h2>
       <button class="close-btn" onclick="closeModal()">닫기</button>
     </div>
 
-    <div class="manager" id="managerText">담당자 : </div>
+    <div class="manager" id="managerText"></div>
 
-    <h3>확정 멤버</h3>
     <table>
       <thead>
         <tr>
           <th>닉네임</th>
-          <th>군표</th>
-          <th>경력사항</th>
+          <th>군수</th>
+          <th>스크린샷</th>
+          <th>비고</th>
+          <th>확정</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td colspan="3">아직 등록된 멤버가 없습니다.</td>
-        </tr>
-      </tbody>
+      <tbody id="listBody"></tbody>
     </table>
 
-    <button class="apply-btn" onclick="toggleApply()">지원하기</button>
+    <button class="admin-btn" onclick="adminLogin()">운영진 모드</button>
 
-    <div class="form-area" id="applyForm">
-      <input type="text" placeholder="닉네임">
-      <input type="text" placeholder="군표">
-      <textarea placeholder="경력사항"></textarea>
+    <div class="form-area" id="adminForm">
+      <input id="nick" placeholder="닉네임">
+      <input id="rank" placeholder="군수">
+      <textarea id="note" placeholder="비고"></textarea>
 
-      <label>본인 신분인증 스샷</label>
-      <input type="file">
+      <label>추가 스크린샷 1</label>
+      <input id="file1" type="file" accept="image/*">
 
-      <label>군표 스샷본</label>
-      <input type="file">
+      <label>추가 스크린샷 2</label>
+      <input id="file2" type="file" accept="image/*">
 
-      <button class="apply-btn" onclick="alert('지원 기능은 Supabase 연결 후 작동됩니다.')">제출하기</button>
+      <button class="save-btn" onclick="saveMember()">명단 등록하기</button>
     </div>
+  </div>
+</div>
 
-    <button class="admin-btn" onclick="adminMode()">운영진 모드</button>
+<div class="modal" id="ruleModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>규정 / 개요</h2>
+      <button class="close-btn" onclick="document.getElementById('ruleModal').style.display='none'">닫기</button>
+    </div>
+    <img class="rule-img" src="https://i.ibb.co/QvgrXYkH/image.jpg">
   </div>
 </div>
 
 <script>
-let count = 3;
+const SUPABASE_URL = "https://xyibdanmecakevhtdaji.supabase.co";
+const SUPABASE_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const timer = setInterval(() => {
+let currentTier = "";
+let adminOk = false;
+
+let count = 3;
+const timer = setInterval(()=>{
   document.getElementById("count").innerText = count;
   count--;
-
   if(count < 0){
     clearInterval(timer);
-    document.getElementById("intro").style.display = "none";
+    document.getElementById("intro").style.display="none";
   }
-}, 1000);
+},1000);
 
-function openTier(title, manager){
-  document.getElementById("modalTitle").innerText = title;
+function openRule(){
+  document.getElementById("ruleModal").style.display="flex";
+}
+
+async function openTier(tier, manager){
+  currentTier = tier;
+  document.getElementById("modalTitle").innerText = tier + " 현황";
   document.getElementById("managerText").innerText = "담당자 : " + manager;
-  document.getElementById("applyForm").style.display = "none";
+  document.getElementById("adminForm").style.display = adminOk ? "block" : "none";
   document.getElementById("tierModal").style.display = "flex";
+  await loadList();
 }
 
 function closeModal(){
-  document.getElementById("tierModal").style.display = "none";
+  document.getElementById("tierModal").style.display="none";
 }
 
-function toggleApply(){
-  const form = document.getElementById("applyForm");
-  form.style.display = form.style.display === "block" ? "none" : "block";
-}
-
-function adminMode(){
+function adminLogin(){
   const pw = prompt("운영진 비밀번호를 입력하세요.");
-
   if(pw === "8282"){
-    alert("운영진 모드입니다. 다음 단계에서 수정/승인 기능을 연결합니다.");
+    adminOk = true;
+    document.getElementById("adminForm").style.display="block";
+    alert("운영진 모드가 활성화되었습니다.");
+    loadList();
   }else{
     alert("비밀번호가 틀렸습니다.");
   }
+}
+
+async function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    if(!file) return resolve(null);
+
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 1200;
+        let w = img.width;
+        let h = img.height;
+
+        if(w > h && w > max){
+          h = Math.round(h * max / w);
+          w = max;
+        }else if(h > max){
+          w = Math.round(w * max / h);
+          h = max;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+
+        canvas.toBlob(blob=>{
+          resolve(new File([blob], "compressed.jpg", {type:"image/jpeg"}));
+        },"image/jpeg",0.72);
+      };
+      img.src = e.target.result;
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadFile(file, folder){
+  if(!file) return null;
+
+  const compressed = await compressImage(file);
+  const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+
+  const { error } = await db.storage
+    .from("liquid-files")
+    .upload(fileName, compressed);
+
+  if(error){
+    alert("파일 업로드 실패: " + error.message);
+    throw error;
+  }
+
+  const { data } = db.storage
+    .from("liquid-files")
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
+}
+
+async function saveMember(){
+  if(!adminOk){
+    alert("운영진 모드에서만 등록 가능합니다.");
+    return;
+  }
+
+  const nickname = document.getElementById("nick").value.trim();
+  const military_rank = document.getElementById("rank").value.trim();
+  const career = document.getElementById("note").value.trim();
+  const f1 = document.getElementById("file1").files[0];
+  const f2 = document.getElementById("file2").files[0];
+
+  if(!nickname){
+    alert("닉네임을 입력해주세요.");
+    return;
+  }
+
+  const file1_url = await uploadFile(f1, currentTier);
+  const file2_url = await uploadFile(f2, currentTier);
+
+  const { error } = await db.from("liquid_applications").insert({
+    tier: currentTier,
+    nickname,
+    military_rank,
+    career,
+    file1_url,
+    file2_url,
+    status: "pending"
+  });
+
+  if(error){
+    alert("등록 실패: " + error.message);
+    return;
+  }
+
+  alert("등록되었습니다.");
+
+  document.getElementById("nick").value="";
+  document.getElementById("rank").value="";
+  document.getElementById("note").value="";
+  document.getElementById("file1").value="";
+  document.getElementById("file2").value="";
+
+  loadList();
+}
+
+async function loadList(){
+  const { data, error } = await db
+    .from("liquid_applications")
+    .select("*")
+    .eq("tier", currentTier)
+    .order("created_at", {ascending:false});
+
+  const body = document.getElementById("listBody");
+
+  if(error){
+    body.innerHTML = `<tr><td colspan="5">불러오기 실패</td></tr>`;
+    return;
+  }
+
+  if(!data || data.length === 0){
+    body.innerHTML = `<tr><td colspan="5">등록된 명단이 없습니다.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = data.map(row=>{
+    const shots = `
+      ${row.file1_url ? `<a class="img-link" href="${row.file1_url}" target="_blank">사진1</a>` : ""}
+      ${row.file2_url ? `<a class="img-link" href="${row.file2_url}" target="_blank">사진2</a>` : ""}
+    ` || "-";
+
+    const confirmed = row.status === "confirmed";
+
+    return `
+      <tr>
+        <td>${escapeHtml(row.nickname || "")}</td>
+        <td>${escapeHtml(row.military_rank || "")}</td>
+        <td>${shots}</td>
+        <td>${escapeHtml(row.career || "")}</td>
+        <td>
+          ${confirmed ? `<span class="badge">확정!</span>` :
+          adminOk ? `<button class="confirm-btn" onclick="confirmMember(${row.id})">확정하기</button>` : `-`}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function confirmMember(id){
+  if(!adminOk){
+    alert("운영진 모드에서만 가능합니다.");
+    return;
+  }
+
+  if(!confirm("이 인원을 확정 처리할까요?")) return;
+
+  const { error } = await db
+    .from("liquid_applications")
+    .update({status:"confirmed"})
+    .eq("id", id);
+
+  if(error){
+    alert("확정 실패: " + error.message);
+    return;
+  }
+
+  alert("확정 처리되었습니다.");
+  loadList();
+}
+
+function escapeHtml(text){
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 </script>
 
