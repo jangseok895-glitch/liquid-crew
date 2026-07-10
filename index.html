@@ -107,6 +107,26 @@ textarea{min-height:75px}
 .notice-back{background:#444;color:#fff;border-radius:10px;padding:8px 12px;font-weight:900}
 @media(max-width:760px){.top-menu{grid-template-columns:1fr}.notice-row{grid-template-columns:55px 1fr 70px}.notice-row-small.date{display:none}.notice-comment-form{grid-template-columns:1fr}.notice-images{grid-template-columns:1fr}}
 
+/* 대회 모니터링 */
+.monitor-open-btn{width:100%;height:40px;margin-top:10px;border-radius:12px;font-size:14px;font-weight:900;color:#fff;background:linear-gradient(135deg,#0d5f39,#13a85e);border:1px solid rgba(150,255,190,.45);box-shadow:0 4px 14px rgba(0,0,0,.38)}
+.monitor-modal{align-items:center;padding:15px}
+.monitor-box{width:420px;max-width:calc(100vw - 24px);border-radius:16px;background:linear-gradient(180deg,#0c1423,#04070d);border:1px solid rgba(118,255,171,.42);box-shadow:0 0 28px rgba(21,209,105,.28);padding:12px}
+.monitor-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.monitor-head h2{font-size:17px;margin:0;color:#baffcf}
+.monitor-tools{display:flex;gap:5px}
+.monitor-mini-btn{padding:5px 8px;border-radius:7px;font-size:10px;font-weight:900;color:#fff;background:#246ec7}
+.monitor-mini-btn.gray{background:#555}
+.monitor-status{font-size:10px;color:#9fb4c8;margin-bottom:7px;text-align:right}
+.monitor-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+.monitor-team{min-height:30px;padding:4px 1px;border-radius:6px;background:#18263a;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:900;line-height:1.1;word-break:keep-all}
+.monitor-cell{height:31px;border-radius:6px;color:#fff;font-size:13px;font-weight:900;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;user-select:none;transition:.15s}
+.monitor-cell.green{background:#18a957;box-shadow:inset 0 0 8px rgba(160,255,195,.42),0 0 5px rgba(20,210,100,.28)}
+.monitor-cell.red{background:#d93636;box-shadow:inset 0 0 8px rgba(255,175,175,.38),0 0 5px rgba(255,40,40,.25)}
+.monitor-cell.admin-active{cursor:pointer}
+.monitor-cell.admin-active:hover{transform:scale(1.04);filter:brightness(1.14)}
+.monitor-guide{margin-top:7px;text-align:center;font-size:9px;color:#a9b7c7}
+@media(max-width:480px){.monitor-box{width:96vw}.monitor-team{font-size:8px}.monitor-cell{height:29px}}
+
 </style>
 </head>
 
@@ -146,6 +166,7 @@ textarea{min-height:75px}
           <button class="menu-btn small-btn t3" onclick="openTier('3군')">3군</button>
           <button class="menu-btn small-btn t4" onclick="openTier('4군')">4군</button>
         </div>
+        <button class="monitor-open-btn" onclick="openTournamentMonitor()">대회 모니터링</button>
       </div>
     </div>
   </div>
@@ -282,6 +303,23 @@ textarea{min-height:75px}
   </div>
 </div>
 
+
+<div class="modal monitor-modal" id="tournamentMonitorModal">
+  <div class="monitor-box">
+    <div class="monitor-head">
+      <h2>대회 모니터링</h2>
+      <div class="monitor-tools">
+        <button class="monitor-mini-btn" id="monitorAdminBtn" onclick="monitorAdminLogin()">운영진</button>
+        <button class="monitor-mini-btn gray" id="monitorNormalBtn" onclick="monitorNormalMode()" style="display:none">일반</button>
+        <button class="monitor-mini-btn gray" onclick="closeTournamentMonitor()">닫기</button>
+      </div>
+    </div>
+    <div class="monitor-status" id="monitorStatus">1초마다 자동 갱신</div>
+    <div class="monitor-grid" id="monitorGrid"></div>
+    <div class="monitor-guide">초록색: 진행 가능 · 빨간색: 종료/불가</div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
 const SUPABASE_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
@@ -363,6 +401,7 @@ function pushStep(){
 }
 
 function closeTopModal(){
+  if(document.getElementById("tournamentMonitorModal").style.display==="flex") return closeTournamentMonitor(false);
   if(document.getElementById("imageModal").style.display==="flex") return closeImage(false);
   if(document.getElementById("editModal").style.display==="flex") return closeEditModal(false);
   if(document.getElementById("noticeWriteModal").style.display==="flex") return closeNoticeWrite(false);
@@ -951,6 +990,133 @@ async function deleteNoticeComment(id){
   const { error } = await db.rpc("liquid_notice_delete_comment", { p_admin_pw: pw, p_comment_id: id });
   if(error) return alert("댓글 삭제 실패: " + error.message);
   await loadNoticeDetail();
+}
+
+
+/* =========================
+   대회 모니터링
+========================= */
+const TOURNAMENT_TEAMS = ["리퀴드1","리퀴드2","SP","아시아","퀄리티","스타링","춘식파","지롱지롱"];
+let monitorAdminOk = false;
+let monitorAdminPw = "";
+let monitorRefreshTimer = null;
+let monitorLoading = false;
+
+function openTournamentMonitor(){
+  document.getElementById("tournamentMonitorModal").style.display = "flex";
+  renderMonitorGrid([]);
+  loadTournamentMonitor();
+  startMonitorRefresh();
+  pushStep();
+}
+
+function closeTournamentMonitor(back=true){
+  document.getElementById("tournamentMonitorModal").style.display = "none";
+  stopMonitorRefresh();
+  monitorAdminOk = false;
+  monitorAdminPw = "";
+  updateMonitorAdminButtons();
+  if(back) history.back();
+}
+
+function startMonitorRefresh(){
+  stopMonitorRefresh();
+  monitorRefreshTimer = setInterval(()=>{
+    if(document.getElementById("tournamentMonitorModal").style.display === "flex"){
+      loadTournamentMonitor(true);
+    }
+  },1000);
+}
+
+function stopMonitorRefresh(){
+  if(monitorRefreshTimer){
+    clearInterval(monitorRefreshTimer);
+    monitorRefreshTimer = null;
+  }
+}
+
+function updateMonitorAdminButtons(){
+  document.getElementById("monitorAdminBtn").style.display = monitorAdminOk ? "none" : "inline-block";
+  document.getElementById("monitorNormalBtn").style.display = monitorAdminOk ? "inline-block" : "none";
+  document.getElementById("monitorStatus").innerText = monitorAdminOk ? "운영진 모드 · 칸을 누르면 색상이 변경됩니다" : "1초마다 자동 갱신";
+}
+
+async function monitorAdminLogin(){
+  const pw = prompt("운영진 비밀번호를 입력하세요.");
+  if(pw === null) return;
+
+  const { data, error } = await db.rpc("liquid_tournament_admin_check", {
+    p_admin_pw: pw
+  });
+
+  if(error || data !== true) return alert("비밀번호가 틀렸습니다.");
+
+  monitorAdminPw = pw;
+  monitorAdminOk = true;
+  updateMonitorAdminButtons();
+  loadTournamentMonitor();
+}
+
+function monitorNormalMode(){
+  monitorAdminOk = false;
+  monitorAdminPw = "";
+  updateMonitorAdminButtons();
+  loadTournamentMonitor();
+}
+
+function renderMonitorGrid(rows){
+  const stateMap = {};
+  (rows || []).forEach(r=>{
+    stateMap[`${r.team_name}_${r.slot_no}`] = !!r.is_green;
+  });
+
+  let html = TOURNAMENT_TEAMS.map(team=>`<div class="monitor-team">${escapeHtml(team)}</div>`).join("");
+
+  for(let slot=1; slot<=4; slot++){
+    html += TOURNAMENT_TEAMS.map(team=>{
+      const key = `${team}_${slot}`;
+      const isGreen = stateMap[key] !== false;
+      const colorClass = isGreen ? "green" : "red";
+      const adminClass = monitorAdminOk ? "admin-active" : "";
+      return `<div class="monitor-cell ${colorClass} ${adminClass}" onclick="toggleMonitorCell('${team}',${slot},${isGreen})">${slot}</div>`;
+    }).join("");
+  }
+
+  document.getElementById("monitorGrid").innerHTML = html;
+}
+
+async function loadTournamentMonitor(silent=false){
+  if(monitorLoading) return;
+  monitorLoading = true;
+
+  const { data, error } = await db
+    .from("liquid_tournament_monitor")
+    .select("team_name,slot_no,is_green")
+    .order("slot_no", {ascending:true});
+
+  monitorLoading = false;
+
+  if(error){
+    if(!silent) alert("대회 모니터링 불러오기 실패: " + error.message);
+    document.getElementById("monitorStatus").innerText = "연결 오류 · SQL 설정을 확인해주세요";
+    return;
+  }
+
+  renderMonitorGrid(data || []);
+}
+
+async function toggleMonitorCell(team, slot, currentGreen){
+  if(!monitorAdminOk) return;
+
+  const { error } = await db.rpc("liquid_tournament_toggle", {
+    p_admin_pw: monitorAdminPw,
+    p_team_name: team,
+    p_slot_no: slot,
+    p_is_green: !currentGreen
+  });
+
+  if(error) return alert("상태 변경 실패: " + error.message);
+  await loadTournamentMonitor();
 }
 
 function escapeHtml(text){
